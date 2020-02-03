@@ -4,8 +4,10 @@ class Prime():
         self.M = m = int(math.sqrt(n)) + 10
         self.A = a = [True] * m
         a[0] = a[1] = False
-        self.T = t = []
-        for i in range(2, int(math.sqrt(m)) + 1):
+        self.T = t = [2]
+        for j in range(4, m, 2):
+            a[j] = False
+        for i in range(3, m, 2):
             if not a[i]:
                 continue
             t.append(i)
