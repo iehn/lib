@@ -45,7 +45,7 @@ class Prime():
                 self.ds_memo[n] = rs
                 return rs
 
-        rs = set([n])
+        rs = set([1, n])
         self.ds_memo[n] = rs
         return rs
 

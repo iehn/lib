@@ -12,7 +12,6 @@ def _kosa(a1, a2, b1, b2):
 def kosa(a1, a2, b1, b2):
     return _kosa(a1,a2,b1,b2) and _kosa(b1,b2,a1,a2)
 
-
 def distance(x1, y1, x2, y2):
     return math.sqrt((x1-x2)**2 + (y1-y2)**2)
 
@@ -104,6 +103,26 @@ def inside_r(xy):
     s = area(xy)
     a = [((xy[i][0] - xy[i-1][0])**2 + (xy[i][1] - xy[i-1][1])**2) ** 0.5 for i in range(3)]
     return 2 * s / sum(a)
+
+# 外心
+# 直線上にある場合はエラーになるので、distance3のr判定をなくしたものでの判定を先に入れる
+def gaisin(xy):
+    a = xy[0][0]
+    b = xy[0][1]
+    c = xy[1][0]
+    d = xy[1][1]
+    e = xy[2][0]
+    f = xy[2][1]
+
+    t1 = (e-a) * (a**2 + b**2 - c**2 - d**2)
+    t2 = (c-a) * (a**2 + b**2 - e**2 - f**2)
+    t3 = 2 * (e-a) * (b-d) - 2 * (c-a) * (b-f)
+    py = (t1 - t2) / t3
+    if c - a == 0:
+        px = (2 * (b-d) * py - a**2 - b**2 + c**2 + d**2) / (2 * (c-a))
+    else:
+        px = (2 * (b-f) * py - a**2 - b**2 + e**2 + f**2) / (2 * (e-a))
+    return (px, py)
 
 ### 凸包, 引数は2要素(xy)の配列もしくはその配列
 def ccw(a, b, c):
