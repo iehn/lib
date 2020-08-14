@@ -1,4 +1,4 @@
-# 汎用版, edgeはN*Nの2次元配列
+# 汎用版, edgeはN*Nの2次元配列, capで速くなった
 class Flow():
     def __init__(self, e, N):
         self.E = e
@@ -8,23 +8,28 @@ class Flow():
         r = 0
         e = self.E
 
-        def f(c):
+        def f(c, cap):
             v = self.v
             v[c] = 1
             if c == t:
-                return 1
+                return cap
             for i in range(self.N):
-                if v[i] == 0 and e[c][i] > 0 and f(i) > 0:
-                    e[c][i] -= 1
-                    e[i][c] += 1
-                    return 1
+                if v[i] or e[c][i] <= 0:
+                    continue
+                cp = min(cap, e[c][i])
+                k = f(i, cp)
+                if k > 0:
+                    e[c][i] -= k
+                    e[i][c] += k
+                    return k
             return 0
 
         while True:
-            self.v = [0] * self.N
-            if f(s) == 0:
+            self.v = [None] * self.N
+            fs = f(s, inf)
+            if fs == 0:
                 break
-            r += 1
+            r += fs
 
         return r
 
@@ -104,7 +109,7 @@ class MinCostFlow():
                         inq[v] = True
 
         if dist[t] == inf:
-            return inf
+            return inf, 0
 
         flow = inf
         v = t
@@ -123,17 +128,20 @@ class MinCostFlow():
             c += e.cost * flow
             v = e.fron
 
-        return dist[t]
+        return dist[t], flow
 
     def calc_min_cost_flow(self, s, t, flow):
         total_cost = 0
-        for i in range(flow):
-            c = self.min_path(s, t)
-            if c == inf:
-                return c
-            total_cost += c
+        while flow > 0:
+            c,f = self.min_path(s, t)
+            if f == 0:
+                return inf
+            f = min(flow, f)
+            total_cost += c * f
+            flow -= f
 
         return total_cost
+
 
 # 使用例( http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=2293 )
 def main():
